@@ -1,0 +1,82 @@
+services:
+  langfuse-db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: langfuse
+      POSTGRES_PASSWORD: langfuse
+      POSTGRES_DB: langfuse
+    volumes:
+      - langfuse_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U langfuse -d langfuse"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  langfuse-server:
+    image: langfuse/langfuse:2
+    restart: unless-stopped
+    depends_on:
+      langfuse-db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://langfuse:langfuse@langfuse-db:5432/langfuse
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: local-dev-secret-change-me
+      SALT: local-dev-salt-change-me
+      TELEMETRY_ENABLED: "false"
+      LANGFUSE_CSP_ENFORCE_HTTPS: "false"
+      LANGFUSE_INIT_ORG_ID: local-org
+      LANGFUSE_INIT_ORG_NAME: local
+      LANGFUSE_INIT_PROJECT_ID: faq-poc
+      LANGFUSE_INIT_PROJECT_NAME: faq-poc
+      LANGFUSE_INIT_PROJECT_PUBLIC_KEY: pk-lf-local-public-key-0000000000
+      LANGFUSE_INIT_PROJECT_SECRET_KEY: sk-lf-local-secret-key-0000000000
+      LANGFUSE_INIT_USER_EMAIL: admin@local.dev
+      LANGFUSE_INIT_USER_NAME: admin
+      LANGFUSE_INIT_USER_PASSWORD: adminpass
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/public/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  evaluator:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      langfuse-server:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      # Override host-local URLs to use container service names
+      LANGFUSE_HOST: http://langfuse-server:3000
+      OLLAMA_HOST: http://ollama:11434
+    volumes:
+      - hf_cache:/cache/huggingface
+
+volumes:
+  langfuse_db_data:
+  ollama_data:
+  hf_cache:

@@ -1,0 +1,24 @@
+{
+  "query": "A ile w końcu kosztuje ta dostawa? Bo już się gubię.",
+  "answer": "Dostawa kurierem DPD kosztuje 14,99 zł, a dostawa do paczkomatu InPost to 12,99 zł. Przy zamówieniach powyżej 199 zł dostawa jest bezpłatna dla obu opcji.",
+  "contexts": [
+    {
+      "id": "dostawa-2",
+      "topic": "Dostawa",
+      "text": "Dostawa kurierem DPD kosztuje 14,99 zł. Dostawa do paczkomatu InPost to 12,99 zł. Przy zamówieniach powyżej 199 zł dostawa jest bezpłatna dla obu opcji.",
+      "score": 0.87
+    },
+    {
+      "id": "dostawa-1",
+      "topic": "Dostawa",
+      "text": "Standardowy czas dostawy w Polsce wynosi 2-3 dni robocze od momentu nadania paczki. Zamówienia złożone do godziny 14:00 są nadawane tego samego dnia roboczego.",
+      "score": 0.61
+    }
+  ],
+  "history": [
+    {"role": "user", "content": "Ile kosztuje wysyłka?"},
+    {"role": "assistant", "content": "Możemy dostarczyć zamówienie kurierem lub do paczkomatu."},
+    {"role": "user", "content": "Ale ile to kosztuje konkretnie?"},
+    {"role": "assistant", "content": "Koszt dostawy zależy od wybranej opcji."}
+  ]
+}

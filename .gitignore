@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.evaluator.pid
+.evaluator.log

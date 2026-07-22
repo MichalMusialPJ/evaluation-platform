@@ -1,0 +1,21 @@
+# Loose pins to work across Python 3.11 – 3.14. POC-grade.
+
+# --- Evaluator ---
+ollama>=0.4.7
+sentence-transformers>=3.3.0
+
+transformers>=4.46.0
+torch>=2.5.0
+numpy>=1.26.0,<3
+# Tokenizer backends needed by various HF models (XLM-R uses sentencepiece; some newer tokenizer files require tiktoken).
+sentencepiece>=0.2.0
+tiktoken>=0.7.0
+protobuf>=4.0
+
+# --- Langfuse (v2 SDK) ---
+langfuse>=2.60.0,<3.0.0
+
+# --- Shared ---
+python-dotenv>=1.0.0
+requests>=2.32.0
+pydantic>=2.10.0
